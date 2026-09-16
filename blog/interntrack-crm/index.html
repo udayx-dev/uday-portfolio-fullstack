@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Building InternTrack: Lessons from Shipping a Full CRM in 2 Weeks, and How I Used Google Dorking to Find Exposed Admin Panels (Ethically) | Uday Shinde</title>
+    <meta
+      name="description"
+      content="How I built InternTrack, a full MERN-stack job-application CRM with JWT auth and a drag-and-drop Kanban board — plus an ethical, high-level look at Google Dorking and why exposed admin panels are a real security risk."
+    />
+    <meta name="keywords" content="InternTrack, MERN stack, JWT authentication, Kanban board, Google Dorking, ethical security research, exposed admin panels, Uday Shinde" />
+    <meta name="author" content="Uday Shinde" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://udayshinde.dev/blog/interntrack-crm/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://udayshinde.dev/blog/interntrack-crm/" />
+    <meta property="og:title" content="Building InternTrack: Lessons from Shipping a Full CRM in 2 Weeks" />
+    <meta property="og:description" content="Architecture decisions, JWT auth, a vanilla-JS Kanban board — and an ethical look at Google Dorking and exposed admin panels." />
+    <meta property="og:image" content="https://udayshinde.dev/assets/og-image.jpg" />
+    <meta property="article:author" content="Uday Shinde" />
+    <meta property="article:published_time" content="2025-04-01" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Building InternTrack: Lessons from Shipping a Full CRM in 2 Weeks" />
+    <meta name="twitter:description" content="MERN stack architecture, JWT auth, a Kanban board — and an ethical look at Google Dorking." />
+
+    <link rel="manifest" href="../../manifest.json" />
+    <meta name="theme-color" content="#0a0a0f" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Building InternTrack: Lessons from Shipping a Full CRM in 2 Weeks, and How I Used Google Dorking to Find Exposed Admin Panels (Ethically)",
+        "author": { "@type": "Person", "name": "Uday Shinde", "url": "https://udayshinde.dev" },
+        "datePublished": "2025-04-01",
+        "mainEntityOfPage": "https://udayshinde.dev/blog/interntrack-crm/",
+        "publisher": { "@type": "Person", "name": "Uday Shinde" }
+      }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../css/style.css" />
+  </head>
+  <body>
+    <header class="article-topbar">
+      <div class="container">
+        <a href="../../index.html#blog" class="article-back">
+          <span aria-hidden="true">←</span> Back to Blog
+        </a>
+        <a href="../../index.html" class="nav-logo" aria-label="Uday Shinde home">
+          <span class="logo-bracket">&lt;</span>US<span class="logo-bracket">/&gt;</span>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <section class="article-hero">
+        <div class="container">
+          <span class="article-category">MERN Stack · Cybersecurity</span>
+          <h1 class="article-title">
+            Building InternTrack: Lessons from Shipping a Full CRM in 2 Weeks,
+            and How I Used Google Dorking to Find Exposed Admin Panels (Ethically)
+          </h1>
+          <div class="article-meta">
+            <span>🗓 April 2025</span>
+            <span>⏱ 9 min read</span>
+            <span>✍️ Uday Shinde</span>
+          </div>
+        </div>
+      </section>
+
+      <article class="article-body container">
+        <p>
+          InternTrack started as a simple idea: job hunting generates a mess of
+          spreadsheets, email threads, and sticky notes, and I wanted a single
+          place to track applications, interviews, deadlines, and offers like
+          a real CRM. I gave myself two weeks to ship a working version, end
+          to end, on the MERN stack (MongoDB, Express, React, Node.js). This
+          post covers what that sprint actually looked like, and — in the
+          second half — an ethical, high-level look at Google Dorking, a
+          security-research technique I explored while thinking about how to
+          keep InternTrack's own admin surface from being accidentally exposed.
+        </p>
+
+        <h2 id="interntrack">Designing InternTrack's Architecture</h2>
+        <p>
+          The core of InternTrack is a personal CRM: applications move through
+          stages (Applied → Interviewing → Offer → Closed) on a drag-and-drop
+          <strong>Kanban board</strong>, with an analytics dashboard summarizing
+          progress across all of them. Getting the board to feel responsive
+          without a heavyweight drag-and-drop library was one of the more
+          interesting front-end problems — it meant being deliberate about
+          where state lived on the React side versus what the backend needed
+          to persist on every card move.
+        </p>
+        <p>
+          On the backend, Express and MongoDB handle the data layer, with
+          routes scoped per-user so applications, deadlines, and notes never
+          leak across accounts. Authentication uses <strong>JWT (JSON Web
+          Tokens)</strong> — a short-lived access token for API calls, paired
+          with a longer-lived refresh flow so users aren't forced to log in
+          again every time a token expires. Getting refresh-token handling
+          right (rotating them safely, invalidating old ones, not leaving a
+          window where a stale token still works) was one of the parts I
+          spent the most time getting comfortable with, since auth bugs are
+          the kind that don't show up until they're a real problem.
+        </p>
+
+        <h3>What Two Weeks Actually Teaches You</h3>
+        <ul>
+          <li>
+            <strong>Scope ruthlessly.</strong> The first version of InternTrack
+            didn't have the analytics dashboard — it was added once the core
+            tracking flow (add application → move through stages → mark
+            outcome) was solid. Shipping the boring, essential path first
+            made the deadline realistic.
+          </li>
+          <li>
+            <strong>Auth is not a "nice to have" you bolt on later.</strong>
+            Building JWT auth in from day one — rather than retrofitting it —
+            avoided a rewrite of every route once real user data existed.
+          </li>
+          <li>
+            <strong>A Kanban board is mostly state management, not drag-and-drop
+            code.</strong> Once the data model for "which stage is this
+            application in, and in what order relative to its siblings" was
+            right, the UI interactions became straightforward.
+          </li>
+        </ul>
+
+        <h2 id="google-dorking">A Detour Into Ethical Security Research: Google Dorking</h2>
+        <p>
+          While thinking about what it would mean for InternTrack (or any
+          side project) to accidentally expose an admin panel to the public
+          internet, I spent time learning about <strong>Google Dorking</strong> —
+          the practice of using advanced search-engine operators (like
+          <code>site:</code>, <code>intitle:</code>, or <code>inurl:</code>) to
+          surface pages that a search engine has indexed but that were never
+          meant to be publicly discoverable. It's a well-known technique in
+          the security-research and OSINT (open-source intelligence)
+          community, and understanding it from a defensive angle is genuinely
+          useful for any developer shipping something public-facing.
+        </p>
+
+        <div class="article-callout ethics glass-card">
+          <p>
+            <strong>A note on intent:</strong> everything below is about
+            <em>defensive</em> awareness — recognizing what makes a project
+            accidentally discoverable, and how to prevent it. This is not a
+            guide to accessing or exploiting anything you don't have
+            explicit permission to test.
+          </p>
+        </div>
+
+        <h3>Why Exposed Admin Panels Happen</h3>
+        <p>
+          Most exposed admin panels aren't the result of some clever attack —
+          they're the result of ordinary oversights: an admin route that was
+          never protected behind authentication during early development and
+          simply never got locked down before deployment, a staging
+          environment left publicly reachable, or default framework routes
+          (like a database admin UI) left at predictable paths with default
+          credentials. Search engines crawl and index whatever is publicly
+          reachable, which means a forgotten `/admin` route can end up
+          searchable without anyone "hacking" anything at all.
+        </p>
+
+        <h3>Responsible Disclosure</h3>
+        <p>
+          If a security researcher (or a curious developer) comes across
+          something that looks like an exposed admin panel or sensitive
+          endpoint that isn't theirs, the responsible path is
+          <strong>responsible disclosure</strong>: don't attempt to log in,
+          modify data, or explore further. Instead, look for the
+          organization's published security contact (a <code>security.txt</code>
+          file, a security page, or a support email) and report what was
+          found, when, and how it was discovered — without including anything
+          that could itself be misused. Most organizations have a process for
+          this precisely because they'd rather hear about it from a
+          well-intentioned researcher than from someone with worse intentions.
+        </p>
+
+        <h3>What Developers Should Do to Prevent This</h3>
+        <ul>
+          <li>Never rely on an unlisted/obscure URL as your only protection — treat every admin or internal route as if it will be found, and put real authentication in front of it.</li>
+          <li>Keep staging and development environments off the public internet, or at minimum behind authentication, not just "not linked from anywhere."</li>
+          <li>Change default credentials on any framework or tool that ships with them, immediately.</li>
+          <li>Use a <code>robots.txt</code> as a courtesy signal to well-behaved crawlers, but never as a security control — it does nothing to stop a determined search or a misbehaving bot.</li>
+          <li>Periodically search your own domain the way an outsider would, so you find your own mistakes before someone else does.</li>
+        </ul>
+
+        <h2>Bringing It Back to InternTrack</h2>
+        <p>
+          The direct takeaway I applied to InternTrack: every route that
+          touches user data or admin-level actions sits behind the same JWT
+          authentication used for the rest of the app — there's no
+          "temporary" unauthenticated admin route left over from development.
+          It's a small thing, but it's exactly the kind of small thing that
+          Google Dorking research keeps reminding me matters.
+        </p>
+
+        <div class="article-tags">
+          <span class="tag">MERN Stack</span>
+          <span class="tag">JWT</span>
+          <span class="tag">React</span>
+          <span class="tag">Node.js</span>
+          <span class="tag">Cybersecurity</span>
+          <span class="tag">Ethical Research</span>
+        </div>
+
+        <div class="article-cta">
+          <p>Have questions about InternTrack, or want to talk shop about auth flows or secure-by-default design?</p>
+          <a href="../../index.html#contact" class="btn btn-primary">Get in touch</a>
+        </div>
+      </article>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>&copy; 2025 Uday Shinde. Crafted with ❤️ and lots of ☕</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Respect the visitor's saved theme/accent preference from the main site.
+      try {
+        const theme = localStorage.getItem('theme');
+        if (theme) document.documentElement.setAttribute('data-theme', theme);
+        const accent = localStorage.getItem('accent');
+        if (accent) document.documentElement.setAttribute('data-accent', accent);
+      } catch (_) {}
+
+      // Privacy-conscious analytics ping for this article view (fails silently).
+      try {
+        fetch('/api/analytics/event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ event: 'blog_article_view', meta: 'interntrack-crm' }),
+          keepalive: true,
+        }).catch(() => {});
+      } catch (_) {}
+    </script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+BEGIN:VCARD
+VERSION:3.0
+FN:Uday Shinde
+N:Shinde;Uday;;;
+TITLE:CSE Student & Full-Stack Developer
+ORG:GHRISTU
+EMAIL;type=INTERNET;type=WORK:shinde.uday538@gmail.com
+URL:https://udayshinde.dev
+URL;type=GitHub:https://github.com/udayx-dev
+URL;type=LinkedIn:https://linkedin.com/in/udayxshinde
+ADR;type=HOME:;;Pune;Maharashtra;;India
+NOTE:B.Tech CSE Student at GHRISTU | MERN Stack | Cybersecurity | Cummins Scholar 2025-28 | CGPA 8.45 | Expected Graduation 2028
+END:VCARD

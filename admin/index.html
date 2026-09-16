@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | Uday Shinde</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+      body { padding-bottom: 4rem; }
+      .admin-topbar { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 0; }
+      .admin-topbar h1 { font-family: var(--font-display); font-size: 1.3rem; }
+      .summary-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+      .summary-card { padding: 1.25rem; text-align: center; }
+      .summary-card .num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+      .summary-card .label { font-size: .78rem; color: var(--text-muted); margin-top: .25rem; }
+
+      .tabs { display: flex; gap: .5rem; margin-bottom: 1.25rem; }
+      .tab-btn {
+        padding: .55rem 1.2rem; border-radius: 999px; border: 1px solid var(--glass-border);
+        background: var(--bg-card); color: var(--text-secondary); font-size: .85rem; font-weight: 600; cursor: pointer;
+      }
+      .tab-btn.active { background: rgba(var(--accent-rgb),0.15); color: var(--accent); border-color: rgba(var(--accent-rgb),0.4); }
+
+      .filters { display: flex; gap: .6rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+      .filters select {
+        padding: .5rem .8rem; border-radius: var(--radius-sm); border: 1px solid var(--glass-border);
+        background: var(--bg-card); color: var(--text-primary); font-size: .82rem;
+      }
+
+      .msg-card { padding: 1.25rem 1.5rem; margin-bottom: .9rem; }
+      .msg-card.unread { border-left: 3px solid var(--accent); }
+      .msg-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+      .msg-head strong { font-size: .95rem; }
+      .msg-head .badges { display: flex; gap: .4rem; flex-wrap: wrap; }
+      .badge { font-size: .68rem; padding: .2rem .55rem; border-radius: 999px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+      .badge.source-contact_form { background: rgba(0,229,255,0.15); color: var(--accent); }
+      .badge.source-chatbot { background: rgba(123,92,255,0.18); color: var(--accent-secondary); }
+      .badge.status-new { background: rgba(34,197,94,0.15); color: var(--success); }
+      .badge.status-in_progress { background: rgba(245,158,11,0.15); color: var(--warning); }
+      .badge.status-closed { background: rgba(90,90,122,0.2); color: var(--text-muted); }
+      .badge.status-pending { background: rgba(245,158,11,0.15); color: var(--warning); }
+      .badge.status-confirmed { background: rgba(34,197,94,0.15); color: var(--success); }
+      .badge.status-declined { background: rgba(239,68,68,0.15); color: var(--error); }
+      .badge.status-completed { background: rgba(90,90,122,0.2); color: var(--text-muted); }
+      .msg-meta { font-size: .76rem; color: var(--text-muted); margin: .4rem 0 .6rem; }
+      .msg-body { font-size: .88rem; color: var(--text-secondary); line-height: 1.6; white-space: pre-wrap; margin-bottom: .85rem; }
+      .msg-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+      .msg-actions button, .msg-actions select {
+        font-size: .76rem; padding: .4rem .8rem; border-radius: var(--radius-sm);
+        border: 1px solid var(--glass-border); background: var(--bg-card); color: var(--text-secondary); cursor: pointer;
+      }
+      .msg-actions button:hover { color: var(--accent); border-color: rgba(var(--accent-rgb),0.4); }
+      .msg-actions .danger:hover { color: var(--error); border-color: rgba(239,68,68,0.4); }
+
+      .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+      #loading-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="admin-topbar">
+        <h1>📬 Admin Dashboard</h1>
+        <button class="btn btn-glass btn-sm" id="logout-btn">Log Out</button>
+      </div>
+
+      <div class="summary-row" id="summary-row"></div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="messages">Messages</button>
+        <button class="tab-btn" data-tab="calls">Call Requests</button>
+      </div>
+
+      <div id="messages-panel">
+        <div class="filters">
+          <select id="filter-source">
+            <option value="">All sources</option>
+            <option value="contact_form">Contact Form</option>
+            <option value="chatbot">Chatbot</option>
+          </select>
+          <select id="filter-status">
+            <option value="">All statuses</option>
+            <option value="new">New</option>
+            <option value="in_progress">In Progress</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <div id="messages-list"></div>
+      </div>
+
+      <div id="calls-panel" style="display:none">
+        <div id="calls-list"></div>
+      </div>
+    </div>
+
+    <script>
+      const messagesList = document.getElementById('messages-list');
+      const callsList = document.getElementById('calls-list');
+      const summaryRow = document.getElementById('summary-row');
+
+      async function api(path, opts = {}) {
+        const res = await fetch(path, { credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, ...opts });
+        if (res.status === 401) { window.location.href = './login.html'; throw new Error('unauthenticated'); }
+        return res;
+      }
+
+      function escapeHtml(str) {
+        return String(str ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      }
+
+      function fmtDate(iso) {
+        return new Date(iso).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+      }
+
+      async function loadSummary() {
+        const res = await api('/api/admin/summary');
+        const data = await res.json();
+        summaryRow.innerHTML = `
+          <div class="summary-card glass-card"><div class="num">${data.unreadMessages}</div><div class="label">Unread Messages</div></div>
+          <div class="summary-card glass-card"><div class="num">${data.pendingCalls}</div><div class="label">Pending Call Requests</div></div>
+          <div class="summary-card glass-card"><div class="num">${(data.last30Days.find(e => e.event_name === 'chatbot_message') || { count: 0 }).count}</div><div class="label">Chatbot Msgs (30d)</div></div>
+          <div class="summary-card glass-card"><div class="num">${(data.last30Days.find(e => e.event_name === 'page_view') || { count: 0 }).count}</div><div class="label">Page Views (30d)</div></div>
+        `;
+      }
+
+      async function loadMessages() {
+        messagesList.innerHTML = '<div id="loading-state">Loading…</div>';
+        const source = document.getElementById('filter-source').value;
+        const status = document.getElementById('filter-status').value;
+        const params = new URLSearchParams();
+        if (source) params.set('source', source);
+        if (status) params.set('status', status);
+        const res = await api(`/api/admin/messages?${params.toString()}`);
+        const data = await res.json();
+        if (!data.messages.length) {
+          messagesList.innerHTML = '<div class="empty-state">No messages match this filter. 🎉</div>';
+          return;
+        }
+        messagesList.innerHTML = data.messages.map(renderMessage).join('');
+        attachMessageHandlers();
+      }
+
+      function renderMessage(m) {
+        return `
+          <div class="msg-card glass-card ${m.is_read ? '' : 'unread'}" data-id="${m.id}">
+            <div class="msg-head">
+              <strong>${escapeHtml(m.name)} &lt;${escapeHtml(m.email)}&gt;</strong>
+              <div class="badges">
+                <span class="badge source-${m.source}">${m.source === 'chatbot' ? 'Chatbot' : 'Contact Form'}</span>
+                <span class="badge status-${m.status}">${m.status.replace('_', ' ')}</span>
+                ${m.is_read ? '' : '<span class="badge" style="background:rgba(0,229,255,.15);color:var(--accent)">Unread</span>'}
+              </div>
+            </div>
+            <div class="msg-meta">${m.subject ? escapeHtml(m.subject) + ' · ' : ''}${fmtDate(m.created_at)} ${m.email_sent ? '· ✅ email sent' : '· ⚠️ email not sent'}</div>
+            <div class="msg-body">${escapeHtml(m.message)}</div>
+            <div class="msg-actions">
+              <button data-action="toggle-read">${m.is_read ? 'Mark Unread' : 'Mark Read'}</button>
+              <select data-action="status">
+                <option value="new" ${m.status === 'new' ? 'selected' : ''}>New</option>
+                <option value="in_progress" ${m.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                <option value="closed" ${m.status === 'closed' ? 'selected' : ''}>Closed</option>
+              </select>
+              <button data-action="delete" class="danger">Delete</button>
+            </div>
+          </div>
+        `;
+      }
+
+      function attachMessageHandlers() {
+        messagesList.querySelectorAll('.msg-card').forEach((card) => {
+          const id = card.dataset.id;
+          card.querySelector('[data-action="toggle-read"]').addEventListener('click', async (e) => {
+            const isCurrentlyUnread = card.classList.contains('unread');
+            await api(`/api/admin/messages/${id}`, { method: 'PATCH', body: JSON.stringify({ is_read: isCurrentlyUnread }) });
+            loadMessages();
+            loadSummary();
+          });
+          card.querySelector('[data-action="status"]').addEventListener('change', async (e) => {
+            await api(`/api/admin/messages/${id}`, { method: 'PATCH', body: JSON.stringify({ status: e.target.value }) });
+            loadMessages();
+          });
+          card.querySelector('[data-action="delete"]').addEventListener('click', async () => {
+            if (!confirm('Delete this message permanently?')) return;
+            await api(`/api/admin/messages/${id}`, { method: 'DELETE' });
+            loadMessages();
+            loadSummary();
+          });
+        });
+      }
+
+      async function loadCalls() {
+        callsList.innerHTML = '<div id="loading-state">Loading…</div>';
+        const res = await api('/api/admin/calls');
+        const data = await res.json();
+        if (!data.calls.length) {
+          callsList.innerHTML = '<div class="empty-state">No call requests yet.</div>';
+          return;
+        }
+        callsList.innerHTML = data.calls.map(renderCall).join('');
+        attachCallHandlers();
+      }
+
+      function renderCall(c) {
+        return `
+          <div class="msg-card glass-card ${c.is_read ? '' : 'unread'}" data-id="${c.id}">
+            <div class="msg-head">
+              <strong>${escapeHtml(c.name)} &lt;${escapeHtml(c.email)}&gt;</strong>
+              <div class="badges">
+                <span class="badge status-${c.status}">${c.status}</span>
+                ${c.is_read ? '' : '<span class="badge" style="background:rgba(0,229,255,.15);color:var(--accent)">Unread</span>'}
+              </div>
+            </div>
+            <div class="msg-meta">
+              📅 ${escapeHtml(c.preferred_date || '—')} · ⏰ ${escapeHtml(c.preferred_time || '—')} · 🌍 ${escapeHtml(c.timezone || '—')} · ${fmtDate(c.created_at)}
+              ${c.email_sent ? '· ✅ email sent' : '· ⚠️ email not sent'}
+            </div>
+            <div class="msg-body">${escapeHtml(c.reason || 'No reason given.')}</div>
+            <div class="msg-actions">
+              <button data-action="toggle-read">${c.is_read ? 'Mark Unread' : 'Mark Read'}</button>
+              <select data-action="status">
+                <option value="pending" ${c.status === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="confirmed" ${c.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+                <option value="declined" ${c.status === 'declined' ? 'selected' : ''}>Declined</option>
+                <option value="completed" ${c.status === 'completed' ? 'selected' : ''}>Completed</option>
+              </select>
+            </div>
+          </div>
+        `;
+      }
+
+      function attachCallHandlers() {
+        callsList.querySelectorAll('.msg-card').forEach((card) => {
+          const id = card.dataset.id;
+          card.querySelector('[data-action="toggle-read"]').addEventListener('click', async () => {
+            const isCurrentlyUnread = card.classList.contains('unread');
+            await api(`/api/admin/calls/${id}`, { method: 'PATCH', body: JSON.stringify({ is_read: isCurrentlyUnread }) });
+            loadCalls();
+            loadSummary();
+          });
+          card.querySelector('[data-action="status"]').addEventListener('change', async (e) => {
+            await api(`/api/admin/calls/${id}`, { method: 'PATCH', body: JSON.stringify({ status: e.target.value }) });
+            loadCalls();
+          });
+        });
+      }
+
+      // Tabs
+      document.querySelectorAll('.tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const tab = btn.dataset.tab;
+          document.getElementById('messages-panel').style.display = tab === 'messages' ? '' : 'none';
+          document.getElementById('calls-panel').style.display = tab === 'calls' ? '' : 'none';
+        });
+      });
+
+      document.getElementById('filter-source').addEventListener('change', loadMessages);
+      document.getElementById('filter-status').addEventListener('change', loadMessages);
+
+      document.getElementById('logout-btn').addEventListener('click', async () => {
+        await fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' });
+        window.location.href = './login.html';
+      });
+
+      // Boot: verify session first, then load data.
+      (async function init() {
+        try {
+          await api('/api/admin/me');
+        } catch (_) {
+          return; // already redirected to login
+        }
+        loadSummary();
+        loadMessages();
+        loadCalls();
+      })();
+    </script>
+  </body>
+</html>
