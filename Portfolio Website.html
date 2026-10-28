@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<meta name="description" content="Uday Uttam Shinde — B.Tech CSE student in Pune building full-stack and AI products. Portfolio, projects, skills and certifications." />
+<link rel="icon" href="data:," />
+<title>Uday Shinde — Portfolio</title>
+<script>document.documentElement.classList.add('js');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+  /* ————— Impeccable pass —————
+     Type does the work. No cards, no pills, no beige wash, no icon tiles.
+     One accent, used rarely. Hairlines and whitespace instead of boxes. */
+  :root{
+    --paper:#ffffff;
+    --ink:#16181d;          /* tinted near-black, never pure #000 */
+    --ink-2:#3d4149;
+    --muted:#62666e;        /* on white: 5.9:1 */
+    --line:#e3e4e1;
+    --line-dark:#16181d;
+    --accent:#bc3908;       /* burnt orange — links, markers, one word at a time */
+    --accent-ink:#9c2f06;
+    --max:1060px;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Archivo", "Helvetica Neue", sans-serif;
+    font-size:16.5px; line-height:1.65;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  a{color:inherit}
+  ::selection{background:var(--accent); color:#fff}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 28px}
+
+  /* scroll progress — a hairline that fills, nothing more */
+  .progress{position:fixed; top:0; left:0; height:2px; width:0; background:var(--accent); z-index:60}
+
+  /* ————— header: a name and a row of words, no bar tricks ————— */
+  header{border-bottom:1px solid var(--line-dark)}
+  .nav{display:flex; align-items:baseline; justify-content:space-between; gap:20px; padding:20px 0 18px; flex-wrap:wrap}
+  .name{font-weight:900; font-size:17px; letter-spacing:-.02em; text-decoration:none}
+  .name i{font-style:normal; color:var(--accent)}
+  .links{display:flex; gap:26px; flex-wrap:wrap}
+  .links a{
+    text-decoration:none; font-size:14px; font-weight:600; color:var(--ink-2);
+    padding-bottom:2px; border-bottom:1px solid transparent;
+  }
+  .links a:hover{color:var(--ink); border-bottom-color:var(--ink)}
+  .links a.active{color:var(--accent-ink); border-bottom-color:var(--accent)}
+
+  /* ————— hero ————— */
+  .hero{padding:88px 0 0}
+  .hero .where{
+    font-size:14px; font-weight:600; color:var(--ink-2); margin:0;
+    display:flex; align-items:center; gap:10px;
+  }
+  .hero .where::before{content:""; width:26px; height:2px; background:var(--accent); flex:none}
+  .hero h1{
+    font-family:"Newsreader", Georgia, serif; font-weight:400;
+    font-size:clamp(52px, 9vw, 104px); line-height:.98; letter-spacing:-.015em;
+    margin:30px 0 0; max-width:11ch;
+  }
+  .hero h1 strong{font-weight:500; color:var(--accent-ink)}
+  .hero .intro{
+    margin:34px 0 0; font-size:clamp(18px,2.3vw,21px); line-height:1.55;
+    color:var(--ink-2); max-width:56ch;
+  }
+  .hero .intro b{color:var(--ink); font-weight:700}
+  .go{display:flex; flex-wrap:wrap; gap:8px 30px; margin-top:34px}
+  .go a{
+    font-weight:700; font-size:15.5px; text-decoration:none;
+    border-bottom:2px solid var(--ink); padding-bottom:3px;
+  }
+  .go a .arr{display:inline-block; transition:transform .3s var(--ease)}
+  .go a:hover{color:var(--accent-ink); border-bottom-color:var(--accent)}
+  .go a:hover .arr{transform:translate(2px,-2px)}
+  .go a.plain{border-bottom-color:var(--line); font-weight:600; color:var(--ink-2)}
+  .go a.plain:hover{color:var(--accent-ink); border-bottom-color:var(--accent)}
+
+  /* facts as one ruled ledger line — no stat boxes */
+  .ledger{
+    margin-top:64px; border-top:1px solid var(--line-dark);
+    display:grid; grid-template-columns:repeat(4,1fr);
+  }
+  .ledger div{padding:18px 22px 4px 0}
+  .ledger div + div{padding-left:22px; border-left:1px solid var(--line)}
+  .ledger b{display:block; font-family:"Newsreader",Georgia,serif; font-weight:500; font-size:30px; line-height:1; letter-spacing:-.01em}
+  .ledger span{display:block; margin-top:7px; font-size:13px; line-height:1.45; color:var(--muted)}
+
+  /* ————— sections: each gets its own treatment, no repeated template ————— */
+  section{padding:104px 0 0; scroll-margin-top:24px}
+  .kicker{
+    font-size:12.5px; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--accent-ink); margin:0 0 18px;
+  }
+
+  /* about — editorial prose, first paragraph set large */
+  .about-lede{font-size:clamp(21px,3vw,27px); line-height:1.45; font-weight:500; letter-spacing:-.01em; max-width:30em; margin:0}
+  .about-cols{display:grid; grid-template-columns:1fr 1fr; gap:0 56px; margin-top:36px; max-width:62em}
+  .about-cols p{margin:0 0 18px; color:var(--ink-2)}
+  .about-cols p b{color:var(--ink)}
+  .record{margin-top:44px; border-top:1px solid var(--line-dark)}
+  .record .row{
+    display:grid; grid-template-columns:minmax(180px,320px) 1fr; gap:8px 40px;
+    padding:17px 0; border-bottom:1px solid var(--line);
+  }
+  .record .row b{font-size:15.5px; letter-spacing:-.01em}
+  .record .row span{color:var(--muted); font-size:15px}
+
+  /* skills — a table, not a pile of pills */
+  .skills{border-top:1px solid var(--line-dark)}
+  .skill{
+    display:grid; grid-template-columns:200px 1fr; gap:8px 40px;
+    padding:19px 0; border-bottom:1px solid var(--line); align-items:baseline;
+  }
+  .skill h3{margin:0; font-size:15px; font-weight:900; letter-spacing:-.01em}
+  .skill p{margin:0; color:var(--ink-2); font-size:16px}
+  .skill p b{color:var(--accent-ink); font-weight:600}
+
+  /* projects — an index you read top to bottom */
+  .filters{display:flex; gap:28px; flex-wrap:wrap; margin:2px 0 8px}
+  .filter-btn{
+    appearance:none; background:none; border:0; border-bottom:2px solid transparent;
+    font:inherit; font-size:14.5px; font-weight:600; color:var(--muted);
+    padding:0 0 3px; cursor:pointer;
+  }
+  .filter-btn:hover{color:var(--ink)}
+  .filter-btn.active{color:var(--ink); border-bottom-color:var(--accent)}
+  .project{
+    display:grid; grid-template-columns:1fr auto; gap:6px 48px;
+    padding:38px 0 34px; border-top:1px solid var(--line);
+  }
+  .project:first-of-type{border-top:1px solid var(--line-dark)}
+  .project:last-of-type{border-bottom:1px solid var(--line-dark)}
+  .project h3{margin:0; font-family:"Newsreader",Georgia,serif; font-weight:500; font-size:clamp(28px,4vw,38px); line-height:1.08; letter-spacing:-.01em}
+  .project h3 a{text-decoration:none}
+  .project h3 a:hover{color:var(--accent-ink)}
+  .project .flag{
+    display:inline-block; vertical-align:super; margin-left:10px;
+    font-family:"Archivo",sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--accent-ink);
+  }
+  .project p{margin:12px 0 0; color:var(--muted); max-width:54ch; font-size:16px}
+  .project .stack{margin-top:14px; font-size:12.5px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-2)}
+  .project .stack em{font-style:normal; color:var(--accent-ink)}
+  .plinks{display:flex; flex-direction:column; gap:12px; align-items:flex-end; padding-top:10px}
+  .plinks a{font-size:14.5px; font-weight:700; text-decoration:none; white-space:nowrap; border-bottom:2px solid var(--ink); padding-bottom:2px}
+  .plinks a:hover{color:var(--accent-ink); border-bottom-color:var(--accent)}
+  .plinks a.ghost{border-bottom-color:var(--line); font-weight:600; color:var(--ink-2)}
+  .plinks a.ghost:hover{color:var(--accent-ink); border-bottom-color:var(--accent)}
+  .project.hidden{display:none}
+
+  /* certification — a single entry, set like a citation */
+  .cert{border-top:1px solid var(--line-dark); padding-top:34px; display:grid; grid-template-columns:1fr auto; gap:6px 48px}
+  .cert h3{margin:0; font-family:"Newsreader",Georgia,serif; font-weight:500; font-size:clamp(28px,4vw,38px); line-height:1.08; letter-spacing:-.01em}
+  .cert .by{margin:10px 0 0; font-size:15px; color:var(--ink-2)}
+  .cert .by b{color:var(--ink)}
+  .cert p{margin:12px 0 0; color:var(--muted); max-width:54ch}
+  .cert .verify{padding-top:10px}
+  .cert .verify a{font-size:14.5px; font-weight:700; text-decoration:none; white-space:nowrap; border-bottom:2px solid var(--ink); padding-bottom:2px}
+  .cert .verify a:hover{color:var(--accent-ink); border-bottom-color:var(--accent)}
+  .cert-note{margin:26px 0 0; font-size:14.5px; color:var(--muted)}
+
+  /* contact — the biggest type on the page, then plain rows */
+  .contact{padding-bottom:8px}
+  .contact h2{
+    font-family:"Newsreader",Georgia,serif; font-weight:400;
+    font-size:clamp(44px,7.5vw,84px); line-height:1.02; letter-spacing:-.015em;
+    margin:0; max-width:13ch;
+  }
+  .contact h2 strong{font-weight:500; color:var(--accent-ink)}
+  .contact .sub{margin:24px 0 0; color:var(--ink-2); max-width:52ch; font-size:17px}
+  .ways{margin-top:44px; border-top:1px solid var(--line-dark)}
+  .ways a, .ways button{
+    display:flex; justify-content:space-between; align-items:baseline; gap:20px; width:100%;
+    padding:18px 0; border:0; border-bottom:1px solid var(--line); background:none;
+    font:inherit; text-align:left; text-decoration:none; cursor:pointer; color:var(--ink);
+  }
+  .ways .w{font-family:"Newsreader",Georgia,serif; font-size:24px; font-weight:500; letter-spacing:-.01em}
+  .ways .d{font-size:14px; color:var(--muted); text-align:right}
+  .ways a:hover .w, .ways button:hover .w{color:var(--accent-ink)}
+  .copy-note{font-size:13.5px; font-weight:600; color:var(--accent-ink); min-height:21px; margin:12px 0 0}
+
+  footer{margin-top:110px; border-top:1px solid var(--line-dark)}
+  .foot{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; padding:22px 0 34px; font-size:13.5px; color:var(--muted)}
+  .foot b{color:var(--ink)}
+
+  /* ————— motion: one quiet idea, repeated with restraint —————
+     A hairline draws itself across, then the words settle up 10px.
+     No bounce, no elastic, nothing loops. Reduced motion gets the
+     finished page, instantly. */
+  .js .rv{opacity:0; transform:translateY(10px); transition:opacity .7s var(--ease), transform .7s var(--ease)}
+  .js .rv.in{opacity:1; transform:none}
+  .js .rv-line{position:relative}
+  .js .rv-line::after{
+    content:""; position:absolute; left:0; right:0; top:-1px; height:1px;
+    background:var(--ink); transform:scaleX(0); transform-origin:left;
+    transition:transform 1s var(--ease) .1s;
+  }
+  .js .rv-line.in::after{transform:scaleX(1)}
+  .d1{transition-delay:.07s}.d2{transition-delay:.14s}
+
+  @media (max-width:760px){
+    .wrap{padding:0 20px}
+    section{padding-top:76px}
+    .hero{padding-top:56px}
+    .links{gap:18px}
+    .ledger{grid-template-columns:1fr 1fr}
+    .ledger div{padding:16px 16px 10px 0}
+    .ledger div + div{border-left:0; padding-left:0}
+    .ledger div:nth-child(even){padding-left:16px; border-left:1px solid var(--line)}
+    .about-cols{grid-template-columns:1fr}
+    .record .row{grid-template-columns:1fr; gap:2px}
+    .skill{grid-template-columns:1fr; gap:2px}
+    .project{grid-template-columns:1fr}
+    .plinks{flex-direction:row; align-items:flex-start; padding-top:6px}
+    .cert{grid-template-columns:1fr}
+    .ways .w{font-size:21px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .js .rv{opacity:1 !important; transform:none !important; transition:none !important}
+    .js .rv-line::after{transition:none !important; transform:scaleX(1) !important}
+    *{transition:none !important}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<header>
+  <div class="wrap">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="name" href="#top">Uday Shinde<i>.</i></a>
+      <div class="links" id="navLinks">
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#certifications">Certifications</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="where rv">Pune, India — open to internships</p>
+    <h1 class="rv d1">Software, built <strong>properly</strong> and shipped.</h1>
+    <p class="intro rv d2">I'm <b>Uday Uttam Shinde</b>, a B.Tech CSE student at GH Raisoni International Skill Tech University (class of 2028). I work across the full stack and AI — currently on InternTrack.ai, a tracker that helps students manage applications, resumes and skill gaps in one place.</p>
+    <div class="go rv d2">
+      <a href="#projects">See the projects <span class="arr">↓</span></a>
+      <a class="plain" href="https://github.com/udayx-dev" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
+      <a class="plain" href="https://linkedin.com/in/udayxshinde" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
+    </div>
+
+    <div class="ledger rv" aria-label="At a glance">
+      <div><b>8.77</b><span>CGPA, B.Tech CSE</span></div>
+      <div><b>2028</b><span>Graduating, GH RISTU Pune</span></div>
+      <div><b>4</b><span>Projects built &amp; documented</span></div>
+      <div><b>1 in 12,000</b><span>Cummins Nurturing Brilliance Scholarship</span></div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="kicker rv">About</p>
+    <p class="about-lede rv">I care less about how much a product does, and more about whether it holds up — tested, secure, and light enough to load instantly.</p>
+    <div class="about-cols">
+      <div class="rv">
+        <p>My focus is <b>software engineering first</b>, then AI, cloud and DevOps. InternTrack.ai came out of a problem I had myself: applications scattered across spreadsheets and inboxes, with no honest view of where I stood. It now tracks applications, interviews and offers, analyses resumes against job descriptions, and flags skill gaps.</p>
+        <p>The same thinking runs through my other work — a face-recognition attendance system that removes proxy-prone roll calls, and smaller tools built to be finished rather than demoed.</p>
+      </div>
+      <div class="rv d1">
+        <p>At university I'm <b>Student Coordinator of the Developer's Club</b> and an organiser for SutraTech-2K25. I took part in <b>Smart India Hackathon 2025</b> and the <b>Google Cloud Arcade Facilitator</b> program.</p>
+        <p>My engineering is funded by the <b>Cummins Nurturing Brilliance Scholarship</b>, which selected me from roughly 12,000 applicants — the fact I'm proudest of on this page, and the standard I try to work to.</p>
+      </div>
+    </div>
+
+    <div class="record rv rv-line">
+      <div class="row"><b>Cummins Nurturing Brilliance Scholarship</b><span>Engineering funded by Cummins India; selected from ~12,000 applications.</span></div>
+      <div class="row"><b>Developer's Club — Student Coordinator</b><span>Running the student developer community at GH RISTU, Pune.</span></div>
+      <div class="row"><b>Smart India Hackathon 2025</b><span>Built and pitched under hackathon constraints.</span></div>
+      <div class="row"><b>Google Cloud Arcade Facilitator</b><span>Facilitator program and student cloud activities.</span></div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <p class="kicker rv">Skills</p>
+    <div class="skills rv rv-line">
+      <div class="skill"><h3>Languages</h3><p>JavaScript, Python, Java, C++, SQL</p></div>
+      <div class="skill"><h3>Frontend</h3><p>React, Tailwind CSS, HTML &amp; CSS, REST API integration</p></div>
+      <div class="skill"><h3>Backend</h3><p>Node.js, Express, Flask, JWT authentication, <b>Gemini APIs</b></p></div>
+      <div class="skill"><h3>Data</h3><p>MongoDB &amp; Atlas, PostgreSQL, Supabase, SQLite</p></div>
+      <div class="skill"><h3>Tools &amp; cloud</h3><p>Docker &amp; Compose, Git &amp; GitHub, Vercel, Render, Postman, VS Code</p></div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <p class="kicker rv">Projects</p>
+
+    <div class="filters rv" role="group" aria-label="Filter projects">
+      <button class="filter-btn active" data-filter="all" type="button">Everything</button>
+      <button class="filter-btn" data-filter="fullstack" type="button">Full-stack</button>
+      <button class="filter-btn" data-filter="ai" type="button">AI / ML</button>
+      <button class="filter-btn" data-filter="software" type="button">Software</button>
+    </div>
+
+    <article class="project rv" data-cat="fullstack ai">
+      <div>
+        <h3><a href="https://intern-track-phi.vercel.app" target="_blank" rel="noopener">InternTrack.ai</a><span class="flag">Flagship</span></h3>
+        <p>An internship and job tracker for students: applications, interviews and offers in one place, resume analysis against real job descriptions, and skill gaps made visible instead of guessed at.</p>
+        <p class="stack">React <em>·</em> Express <em>·</em> MongoDB <em>·</em> Tailwind <em>·</em> Gemini API</p>
+      </div>
+      <div class="plinks">
+        <a href="https://intern-track-phi.vercel.app" target="_blank" rel="noopener">Live demo ↗</a>
+        <a class="ghost" href="https://github.com/udayx-dev/InternTrack" target="_blank" rel="noopener">Code ↗</a>
+      </div>
+    </article>
+
+    <article class="project rv" data-cat="ai fullstack">
+      <div>
+        <h3>Smart Attendance with Face Recognition</h3>
+        <p>Marks attendance from a face instead of a register — no manual roll calls, no proxies. A Python service handles recognition and keeps a database-backed record of every session.</p>
+        <p class="stack">Python <em>·</em> Flask <em>·</em> OpenCV <em>·</em> SQLite</p>
+      </div>
+      <div class="plinks">
+        <a class="ghost" href="https://github.com/udayx-dev" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </article>
+
+    <article class="project rv" data-cat="software">
+      <div>
+        <h3>NexaBank ATM</h3>
+        <p>A banking application built around the unglamorous parts done right: account handling, deposits, withdrawals and balance checks, with validation on every transaction.</p>
+        <p class="stack">Java <em>·</em> SQL <em>·</em> OOP</p>
+      </div>
+      <div class="plinks">
+        <a class="ghost" href="https://github.com/udayx-dev" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </article>
+
+    <article class="project rv" data-cat="ai software">
+      <div>
+        <h3>Crypto Address Categorization</h3>
+        <p>A hackathon build that categorises cryptocurrency addresses, so on-chain activity can be explored through a dashboard instead of raw transaction lists.</p>
+        <p class="stack">Python <em>·</em> Data analysis <em>·</em> Dashboard</p>
+      </div>
+      <div class="plinks">
+        <a class="ghost" href="https://github.com/udayx-dev" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </article>
+  </section>
+
+  <!-- CERTIFICATIONS -->
+  <section id="certifications">
+    <p class="kicker rv">Certifications</p>
+    <div class="cert rv rv-line">
+      <div>
+        <h3>GitHub Foundations</h3>
+        <p class="by">Issued by <b>Microsoft Learn</b> · GitHub Foundations certification</p>
+        <p>Git and GitHub as they're actually used on teams — repositories, branching, pull requests and collaboration workflows, examined rather than just watched.</p>
+      </div>
+      <div class="verify">
+        <a href="https://learn.microsoft.com/en-us/credentials/certifications/github-foundations/" target="_blank" rel="noopener">About the credential ↗</a>
+      </div>
+    </div>
+    <p class="cert-note rv">One so far. This list grows when a certificate is earned, not when a course is started.</p>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact">
+    <p class="kicker rv">Contact</p>
+    <h2 class="rv">Have a role where <strong>shipping</strong> matters?</h2>
+    <p class="sub rv">I'm looking for software and full-stack internships first, then AI and DevOps. The fastest way to reach me is email; everything else is below.</p>
+
+    <div class="ways rv rv-line">
+      <button type="button" id="copyEmailBtn">
+        <span class="w">shinde.uday538@gmail.com</span>
+        <span class="d">Click to copy</span>
+      </button>
+      <a href="https://linkedin.com/in/udayxshinde" target="_blank" rel="noopener">
+        <span class="w">LinkedIn</span>
+        <span class="d">linkedin.com/in/udayxshinde ↗</span>
+      </a>
+      <a href="https://github.com/udayx-dev" target="_blank" rel="noopener">
+        <span class="w">GitHub</span>
+        <span class="d">github.com/udayx-dev ↗</span>
+      </a>
+      <a href="https://www.udayx.dev/" target="_blank" rel="noopener">
+        <span class="w">udayx.dev</span>
+        <span class="d">Current live site ↗</span>
+      </a>
+    </div>
+    <p class="copy-note" id="copyNote" aria-live="polite"></p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span><b>© 2026 Uday Uttam Shinde</b> — Pune, India</span>
+    <span>One page. No framework, no trackers, nothing heavy.</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Reveal: content is fully visible without JS (the .js gate handles
+  // the hidden start state), and each element animates exactly once.
+  var els = document.querySelectorAll('.rv');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function(el){ io.observe(el); });
+  } else {
+    els.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // Progress hairline
+  var progress = document.getElementById('progress');
+  function onScroll(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    progress.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Active nav link
+  var navLinks = document.querySelectorAll('#navLinks a[href^="#"]');
+  var sections = ['about','skills','projects','certifications','contact']
+    .map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  if ('IntersectionObserver' in window && sections.length) {
+    var navIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          navLinks.forEach(function(a){
+            a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
+          });
+        }
+      });
+    }, { rootMargin: '-25% 0px -65% 0px' });
+    sections.forEach(function(s){ navIO.observe(s); });
+  }
+
+  // Project filter
+  var filterBtns = document.querySelectorAll('.filter-btn');
+  var projects = document.querySelectorAll('.project');
+  filterBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      filterBtns.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var f = btn.getAttribute('data-filter');
+      projects.forEach(function(p){
+        var cats = (p.getAttribute('data-cat') || '').split(' ');
+        var show = f === 'all' || cats.indexOf(f) !== -1;
+        p.classList.toggle('hidden', !show);
+        if (show) p.classList.add('in');
+      });
+    });
+  });
+
+  // Copy email
+  var copyBtn = document.getElementById('copyEmailBtn');
+  var copyNote = document.getElementById('copyNote');
+  var email = 'shinde.uday538@gmail.com';
+  copyBtn.addEventListener('click', function(){
+    function done(){
+      copyNote.textContent = 'Email copied — ' + email;
+      setTimeout(function(){ copyNote.textContent = ''; }, 2600);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(email).then(done).catch(function(){ copyNote.textContent = email; });
+    } else {
+      copyNote.textContent = email;
+    }
+  });
+})();
+</script>
+</body>
+</html>
